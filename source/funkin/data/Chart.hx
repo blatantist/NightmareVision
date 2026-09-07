@@ -102,6 +102,7 @@ class Chart
 		
 		songJson.keys ??= 4;
 		songJson.lanes ??= 2;
+		songJson.strumMode ??= false;
 		if (songJson.arrowSkins == null || songJson.arrowSkins.length == 0)
 		{
 			songJson.arrowSkins = [];

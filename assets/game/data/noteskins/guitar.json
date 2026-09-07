@@ -1,0 +1,885 @@
+{
+  "noteTexture": "UI/notes/guitar/gems",
+  "splashTexture": "UI/notes/guitar/splashHit2",
+  "sustainSplashTexture": "UI/notes/guitar/splashHold",
+  "antialiasing": true,
+  "singAnimations": [
+    "singLEFT",
+    "singDOWN",
+    "singUP",
+    "singRIGHT",
+    "singUP"
+  ],
+  "noteAnimations": [
+    [
+      {
+        "anim": "scroll",
+        "xmlName": "gemStd_regular",
+        "looping": true,
+        "fps": 12,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "hold",
+        "xmlName": "hold",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdend",
+        "xmlName": "holdend",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdPress",
+        "xmlName": "holdPress",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdendPress",
+        "xmlName": "holdendPress",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdMiss",
+        "xmlName": "holdMiss",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdendMiss",
+        "xmlName": "holdendMiss",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "scrollTap",
+        "xmlName": "gemStd_tap",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "scrollHopo",
+        "xmlName": "gemStd_hopo",
+        "looping": true,
+        "fps": 12,
+        "offsets": [
+          0,
+          0
+        ]
+      }
+    ],
+    [
+      {
+        "anim": "scroll",
+        "xmlName": "gemStd_regular",
+        "looping": true,
+        "fps": 12,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "hold",
+        "xmlName": "hold",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdend",
+        "xmlName": "holdend",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdPress",
+        "xmlName": "holdPress",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdendPress",
+        "xmlName": "holdendPress",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdMiss",
+        "xmlName": "holdMiss",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdendMiss",
+        "xmlName": "holdendMiss",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "scrollTap",
+        "xmlName": "gemStd_tap",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "scrollHopo",
+        "xmlName": "gemStd_hopo",
+        "looping": true,
+        "fps": 12,
+        "offsets": [
+          0,
+          0
+        ]
+      }
+    ],
+    [
+      {
+        "anim": "scroll",
+        "xmlName": "gemStd_regular",
+        "looping": true,
+        "fps": 12,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "hold",
+        "xmlName": "hold",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdend",
+        "xmlName": "holdend",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdPress",
+        "xmlName": "holdPress",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdendPress",
+        "xmlName": "holdendPress",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdMiss",
+        "xmlName": "holdMiss",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdendMiss",
+        "xmlName": "holdendMiss",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "scrollTap",
+        "xmlName": "gemStd_tap",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "scrollHopo",
+        "xmlName": "gemStd_hopo",
+        "looping": true,
+        "fps": 12,
+        "offsets": [
+          0,
+          0
+        ]
+      }
+    ],
+    [
+      {
+        "anim": "scroll",
+        "xmlName": "gemStd_regular",
+        "looping": true,
+        "fps": 12,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "hold",
+        "xmlName": "hold",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdend",
+        "xmlName": "holdend",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdPress",
+        "xmlName": "holdPress",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdendPress",
+        "xmlName": "holdendPress",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdMiss",
+        "xmlName": "holdMiss",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdendMiss",
+        "xmlName": "holdendMiss",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "scrollTap",
+        "xmlName": "gemStd_tap",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "scrollHopo",
+        "xmlName": "gemStd_hopo",
+        "looping": true,
+        "fps": 12,
+        "offsets": [
+          0,
+          0
+        ]
+      }
+    ],
+    [
+      {
+        "anim": "scroll",
+        "xmlName": "gemStd_regular",
+        "looping": true,
+        "fps": 12,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "hold",
+        "xmlName": "hold",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdend",
+        "xmlName": "holdend",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdPress",
+        "xmlName": "holdPress",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdendPress",
+        "xmlName": "holdendPress",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdMiss",
+        "xmlName": "holdMiss",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "holdendMiss",
+        "xmlName": "holdendMiss",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "scrollTap",
+        "xmlName": "gemStd_tap",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "scrollHopo",
+        "xmlName": "gemStd_hopo",
+        "looping": true,
+        "fps": 12,
+        "offsets": [
+          0,
+          0
+        ]
+      }
+    ]
+  ],
+  "receptorAnimations": [
+    [
+      {
+        "anim": "static",
+        "xmlName": "fret10005",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "pressed",
+        "xmlName": "fret10006",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "confirm",
+        "xmlName": "fret10006",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      }
+    ],
+    [
+      {
+        "anim": "static",
+        "xmlName": "fret20005",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "pressed",
+        "xmlName": "fret20006",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "confirm",
+        "xmlName": "fret20006",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      }
+    ],
+    [
+      {
+        "anim": "static",
+        "xmlName": "fret30005",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "pressed",
+        "xmlName": "fret30006",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "confirm",
+        "xmlName": "fret30006",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      }
+    ],
+    [
+      {
+        "anim": "static",
+        "xmlName": "fret20005",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "pressed",
+        "xmlName": "fret20006",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "confirm",
+        "xmlName": "fret20006",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      }
+    ],
+    [
+      {
+        "anim": "static",
+        "xmlName": "fret10005",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "pressed",
+        "xmlName": "fret10006",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      },
+      {
+        "anim": "confirm",
+        "xmlName": "fret10006",
+        "looping": false,
+        "fps": 24,
+        "offsets": [
+          0,
+          0
+        ]
+      }
+    ]
+  ],
+  "splashesEnabled": true,
+  "susSplashesEnabled": true,
+  "inGameColoring": true,
+  "arrowRGB": [
+    {
+      "r": -13385138,
+      "g": -13385138,
+      "b": -1
+    },
+    {
+      "r": -1950917,
+      "g": -1950917,
+      "b": -1
+    },
+    {
+      "r": -798447,
+      "g": -798447,
+      "b": -1
+    },
+    {
+      "r": -13862432,
+      "g": -13862432,
+      "b": -1
+    },
+    {
+      "r": -1078500,
+      "g": -1078500,
+      "b": -1
+    }
+  ],
+  "noteScale": 1.0781,
+  "receptorScale": 0.9302,
+  "splashScale": 2.0,
+  "susSplashScale": 1.1,
+  "noteSplashAnimations": [
+    {
+      "anim": "note0",
+      "xmlName": "noteSplashHit",
+      "offsets": [
+        0,
+        70
+      ],
+      "fps": 24,
+      "looping": false
+    },
+    {
+      "anim": "note1",
+      "xmlName": "noteSplashHit",
+      "offsets": [
+        0,
+        70
+      ],
+      "fps": 24,
+      "looping": false
+    },
+    {
+      "anim": "note2",
+      "xmlName": "noteSplashHit",
+      "offsets": [
+        0,
+        70
+      ],
+      "fps": 24,
+      "looping": false
+    },
+    {
+      "anim": "note3",
+      "xmlName": "noteSplashHit",
+      "offsets": [
+        0,
+        70
+      ],
+      "fps": 24,
+      "looping": false
+    },
+    {
+      "anim": "note4",
+      "xmlName": "noteSplashHit",
+      "offsets": [
+        0,
+        70
+      ],
+      "fps": 24,
+      "looping": false
+    }
+  ],
+  "susSplashAnimations": [
+    [
+      {
+        "anim": "start",
+        "xmlName": "noteSplashHold",
+        "offsets": [
+          0,
+          36
+        ],
+        "fps": 24,
+        "looping": false
+      },
+      {
+        "anim": "loop",
+        "xmlName": "noteSplashHold",
+        "offsets": [
+          0,
+          36
+        ],
+        "fps": 24,
+        "looping": true
+      },
+      {
+        "anim": "end",
+        "xmlName": "noteSplashHold0000",
+        "offsets": [
+          0,
+          36
+        ],
+        "fps": 60,
+        "looping": false
+      }
+    ],
+    [
+      {
+        "anim": "start",
+        "xmlName": "noteSplashHold",
+        "offsets": [
+          0,
+          36
+        ],
+        "fps": 24,
+        "looping": false
+      },
+      {
+        "anim": "loop",
+        "xmlName": "noteSplashHold",
+        "offsets": [
+          0,
+          36
+        ],
+        "fps": 24,
+        "looping": true
+      },
+      {
+        "anim": "end",
+        "xmlName": "noteSplashHold0000",
+        "offsets": [
+          0,
+          36
+        ],
+        "fps": 60,
+        "looping": false
+      }
+    ],
+    [
+      {
+        "anim": "start",
+        "xmlName": "noteSplashHold",
+        "offsets": [
+          0,
+          36
+        ],
+        "fps": 24,
+        "looping": false
+      },
+      {
+        "anim": "loop",
+        "xmlName": "noteSplashHold",
+        "offsets": [
+          0,
+          36
+        ],
+        "fps": 24,
+        "looping": true
+      },
+      {
+        "anim": "end",
+        "xmlName": "noteSplashHold0000",
+        "offsets": [
+          0,
+          36
+        ],
+        "fps": 60,
+        "looping": false
+      }
+    ],
+    [
+      {
+        "anim": "start",
+        "xmlName": "noteSplashHold",
+        "offsets": [
+          0,
+          36
+        ],
+        "fps": 24,
+        "looping": false
+      },
+      {
+        "anim": "loop",
+        "xmlName": "noteSplashHold",
+        "offsets": [
+          0,
+          36
+        ],
+        "fps": 24,
+        "looping": true
+      },
+      {
+        "anim": "end",
+        "xmlName": "noteSplashHold0000",
+        "offsets": [
+          0,
+          36
+        ],
+        "fps": 60,
+        "looping": false
+      }
+    ],
+    [
+      {
+        "anim": "start",
+        "xmlName": "noteSplashHold",
+        "offsets": [
+          0,
+          36
+        ],
+        "fps": 24,
+        "looping": false
+      },
+      {
+        "anim": "loop",
+        "xmlName": "noteSplashHold",
+        "offsets": [
+          0,
+          36
+        ],
+        "fps": 24,
+        "looping": true
+      },
+      {
+        "anim": "end",
+        "xmlName": "noteSplashHold0000",
+        "offsets": [
+          0,
+          36
+        ],
+        "fps": 60,
+        "looping": false
+      }
+    ]
+  ]
+}

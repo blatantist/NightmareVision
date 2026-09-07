@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="splashHit.png" width="2048" height="64">
+	<SubTexture name="noteSplashHit0000" x="371" y="0" width="64" height="34" frameX="0" frameY="-30" frameWidth="64" frameHeight="64"/>
+	<SubTexture name="noteSplashHit0001" x="305" y="0" width="64" height="41" frameX="0" frameY="-23" frameWidth="64" frameHeight="64"/>
+	<SubTexture name="noteSplashHit0002" x="0" y="0" width="64" height="64" frameX="0" frameY="0" frameWidth="64" frameHeight="64"/>
+	<SubTexture name="noteSplashHit0003" x="239" y="0" width="64" height="46" frameX="0" frameY="-18" frameWidth="64" frameHeight="64"/>
+	<SubTexture name="noteSplashHit0004" x="137" y="0" width="64" height="51" frameX="0" frameY="-13" frameWidth="64" frameHeight="64"/>
+	<SubTexture name="noteSplashHit0005" x="103" y="0" width="32" height="53" frameX="-18" frameY="0" frameWidth="64" frameHeight="64"/>
+	<SubTexture name="noteSplashHit0006" x="203" y="0" width="34" height="49" frameX="-18" frameY="-3" frameWidth="64" frameHeight="64"/>
+	<SubTexture name="noteSplashHit0007" x="66" y="0" width="35" height="54" frameX="-17" frameY="0" frameWidth="64" frameHeight="64"/>
+</TextureAtlas>

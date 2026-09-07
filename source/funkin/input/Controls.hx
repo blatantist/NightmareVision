@@ -39,7 +39,7 @@ enum abstract Action(String) to String from String
 	var NOTE_LEFT_R = "note_left-release";
 	var NOTE_RIGHT_R = "note_right-release";
 	var NOTE_DOWN_R = "note_down-release";
-	
+
 	var NOTE_DODGE = "note_dodge";
 	var NOTE_DODGE_P = "note_dodge-press";
 	var NOTE_DODGE_R = "note_dodge-release";
@@ -114,8 +114,7 @@ class Controls extends FlxActionSet
 		}
 		FlxG.gamepads.deviceConnected.add(gamepadConnected);
 		FlxG.gamepads.deviceDisconnected.add(gamepadDisconnected);
-		
-		instance.customActions.clear();
+
 		ControlsSubState.resetGroups();
 	}
 	

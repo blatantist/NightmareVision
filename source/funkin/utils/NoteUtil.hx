@@ -435,9 +435,9 @@ class NoteUtil
 	{
 		final skin = getSkinFromID(player);
 		
-		final idx = id > skin.keys ? 0 : id;
-		
-		var colors = skin.colors[idx];
+		final idx = (id >= skin.keys || id < 0) ? 0 : id;
+
+		var colors = skin.colors[idx] ?? defaultColors[0];
 		if (ClientPrefs.quants && quant != 0) colors = quantDefaultColors[quants.indexOf(quant)];
 		
 		return new RGBGraphics(colors.r, colors.g, colors.b);

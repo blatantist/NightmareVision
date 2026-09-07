@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="frets.png" width="2048" height="145">
+	<SubTexture name="fret10000" x="0" y="0" width="127" height="75" frameX="0" frameY="0" frameWidth="129" frameHeight="75"/>
+	<SubTexture name="fret10001" x="129" y="0" width="127" height="75" frameX="0" frameY="0" frameWidth="129" frameHeight="75"/>
+	<SubTexture name="fret10002" x="258" y="0" width="127" height="75" frameX="0" frameY="0" frameWidth="129" frameHeight="75"/>
+	<SubTexture name="fret10003" x="387" y="0" width="127" height="75" frameX="0" frameY="0" frameWidth="129" frameHeight="75"/>
+	<SubTexture name="fret10004" x="516" y="0" width="129" height="75" frameX="0" frameY="0" frameWidth="129" frameHeight="75"/>
+	<SubTexture name="fret10005" x="647" y="0" width="127" height="75" frameX="0" frameY="0" frameWidth="129" frameHeight="75"/>
+	<SubTexture name="fret10006" x="259" y="77" width="127" height="65" frameX="0" frameY="-10" frameWidth="129" frameHeight="75"/>
+	<SubTexture name="fret20000" x="776" y="0" width="131" height="75" frameX="-2" frameY="0" frameWidth="133" frameHeight="75"/>
+	<SubTexture name="fret20001" x="909" y="0" width="131" height="75" frameX="-2" frameY="0" frameWidth="133" frameHeight="75"/>
+	<SubTexture name="fret20002" x="1042" y="0" width="131" height="75" frameX="-2" frameY="0" frameWidth="133" frameHeight="75"/>
+	<SubTexture name="fret20003" x="388" y="77" width="132" height="64" frameX="-1" frameY="-11" frameWidth="133" frameHeight="75"/>
+	<SubTexture name="fret20004" x="522" y="77" width="133" height="64" frameX="0" frameY="-11" frameWidth="133" frameHeight="75"/>
+	<SubTexture name="fret20005" x="657" y="77" width="132" height="64" frameX="-1" frameY="-11" frameWidth="133" frameHeight="75"/>
+	<SubTexture name="fret20006" x="0" y="77" width="131" height="68" frameX="-2" frameY="-7" frameWidth="133" frameHeight="75"/>
+	<SubTexture name="fret30000" x="1175" y="0" width="124" height="75" frameX="-1" frameY="0" frameWidth="125" frameHeight="75"/>
+	<SubTexture name="fret30001" x="1301" y="0" width="124" height="75" frameX="-1" frameY="0" frameWidth="125" frameHeight="75"/>
+	<SubTexture name="fret30002" x="1427" y="0" width="124" height="75" frameX="-1" frameY="0" frameWidth="125" frameHeight="75"/>
+	<SubTexture name="fret30003" x="1553" y="0" width="124" height="73" frameX="-1" frameY="-2" frameWidth="125" frameHeight="75"/>
+	<SubTexture name="fret30004" x="1679" y="0" width="124" height="73" frameX="-1" frameY="-2" frameWidth="125" frameHeight="75"/>
+	<SubTexture name="fret30005" x="1805" y="0" width="124" height="73" frameX="-1" frameY="-2" frameWidth="125" frameHeight="75"/>
+	<SubTexture name="fret30006" x="133" y="77" width="124" height="67" frameX="-1" frameY="-8" frameWidth="125" frameHeight="75"/>
+</TextureAtlas>

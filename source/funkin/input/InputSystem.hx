@@ -87,14 +87,17 @@ class InputSystem extends EventDispatcher implements flixel.util.IFlxDestroyable
 	 * Creates a new input system
 	 * @param controls 
 	 */
-	public function new(?controls:Controls)
+	public function new(?controls:Controls, keyCount:Int = 4)
 	{
 		super();
-		
+
 		this.controls = controls ?? Controls.instance;
-		
-		for (noteData => action in ACTION_LIST)
+
+		if (keyCount > ACTION_LIST.length) keyCount = ACTION_LIST.length;
+
+		for (noteData in 0...keyCount)
 		{
+			final action = ACTION_LIST[noteData];
 			final pressed:Action = action;
 			final justPressed:Action = '$action-press';
 			final justReleased:Action = '$action-release';

@@ -403,6 +403,13 @@ class PauseSubState extends MusicBeatSubstate
 	
 	function regenMenu():Void
 	{
+		if (skipTimeText != null)
+		{
+			remove(skipTimeText, true);
+			skipTimeText = FlxDestroyUtil.destroy(skipTimeText);
+		}
+		skipTimeTracker = null;
+
 		for (i in 0...grpMenuShit.members.length)
 		{
 			var obj = grpMenuShit.members[0];

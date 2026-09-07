@@ -215,6 +215,9 @@ class ModManager implements IFlxDestroyable
 	public function getBaseX(direction:Int, player:Int):Float
 	{
 		var x:Float = (FlxG.width * 0.5) + Note.swagWidth * (direction - (keys / 2) + .5) - 3;
+
+		if (lanes <= 1) return x;
+
 		switch (player)
 		{
 			case 0:
@@ -222,7 +225,7 @@ class ModManager implements IFlxDestroyable
 			case 1:
 				x -= FlxG.width * 0.5 - Note.swagWidth * (keys / 2) - 100;
 		}
-		
+
 		return x;
 	}
 	

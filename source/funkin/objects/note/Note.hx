@@ -27,9 +27,9 @@ abstract QueueNote(Array<Dynamic>) to Array<Dynamic>
 {
 	public function new(strumTime:Float, sustainLength:Float, noteData:Int, noteType:Null<String>, isSustainNote:Bool = false, playField:Int = 0)
 	{
-		this = [strumTime, sustainLength, noteData, noteType, isSustainNote, false, playField, false, null];
+		this = [strumTime, sustainLength, noteData, noteType, isSustainNote, false, playField, false, null, false];
 	}
-	
+
 	public var strumTime(get, set):Float;
 	public var sustainLength(get, set):Float;
 	public var noteData(get, set):Int;
@@ -39,6 +39,7 @@ abstract QueueNote(Array<Dynamic>) to Array<Dynamic>
 	public var playField(get, set):Int;
 	public var gfNote(get, set):Bool;
 	public var tail(get, set):Null<Array<QueueNote>>;
+	public var isHopo(get, set):Bool;
 	
 	function get_strumTime():Float return this[0];
 	
@@ -57,7 +58,9 @@ abstract QueueNote(Array<Dynamic>) to Array<Dynamic>
 	function get_gfNote():Bool return this[7];
 	
 	function get_tail():Null<Array<QueueNote>> return this[8];
-	
+
+	function get_isHopo():Bool return this[9];
+
 	function set_strumTime(v:Float):Float return this[0] = v;
 	
 	function set_sustainLength(v:Float):Float return this[1] = v;
@@ -75,6 +78,8 @@ abstract QueueNote(Array<Dynamic>) to Array<Dynamic>
 	function set_gfNote(v:Bool):Bool return this[7] = v;
 	
 	function set_tail(v:Null<Array<QueueNote>>):Null<Array<QueueNote>> return this[8] = v;
+
+	function set_isHopo(v:Bool):Bool return this[9] = v;
 }
 
 abstract NoteSharedTailState(Array<Dynamic>) to Array<Dynamic>
@@ -169,6 +174,8 @@ class Note extends funkin.game.modchart.ModchartNote
 	public var isSustainNote:Bool = false;
 	public var isSustainEnd:Bool = false;
 	public var noteType(default, set):String = null;
+
+	public var isHopo:Bool = false;
 	
 	public var alreadyShifted:Bool = false;
 	
@@ -400,9 +407,10 @@ class Note extends funkin.game.modchart.ModchartNote
 			isSustainEnd = queueNote.isSustainEnd;
 			isSustainNote = queueNote.isSustainNote;
 			player = lane = queueNote.playField;
-			
+
 			strumTime = queueNote.strumTime;
 			sustainLength = queueNote.sustainLength;
+			isHopo = queueNote.isHopo;
 		}
 		
 		mustPress = (player == 0);
