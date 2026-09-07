@@ -140,7 +140,8 @@ class ClientPrefs
 		'instakill' => false,
 		'practice' => false,
 		'botplay' => false,
-		'opponentplay' => false
+		'opponentplay' => false,
+		'strummode' => false
 	];
 	
 	// note colours ------------------------------------------------------------------------//

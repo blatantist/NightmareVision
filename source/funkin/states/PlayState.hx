@@ -375,6 +375,9 @@ class PlayState extends MusicBeatState
 	public var instakillOnMiss:Bool = false;
 	public var cpuControlled(default, set):Bool = false;
 	public var practiceMode:Bool = false;
+
+	// guitar hero mode
+	public var strumMode:Bool = false;
 	
 	public var botplayTxt:FlxText;
 	
@@ -815,7 +818,11 @@ class PlayState extends MusicBeatState
 		// Updating Discord Rich Presence.
 		resetDiscordRPC();
 		
-		input = new InputSystem(controls);
+		// Effective strum mode = chart asks for it AND the player hasn't turned it off in gameplay
+		// settings. Setting off always wins -> the song falls back to standard n-key press-to-hit.
+		strumMode = (SONG.strumMode == true) && ClientPrefs.getGameplaySetting('strummode', false);
+
+		input = new InputSystem(controls, SONG.keys);
 		input.addEventListener(InputEvent.INPUT_PRESSED, onInputPress);
 		input.addEventListener(InputEvent.INPUT_RELEASED, onInputRelease);
 		
@@ -1451,7 +1458,9 @@ class PlayState extends MusicBeatState
 		
 		eventNotes.sort(function(a:EventNote, b:EventNote) return (a.strumTime > b.strumTime ? 1 : -1));
 		queueNotes.sort(function(a:QueueNote, b:QueueNote) return (a.strumTime > b.strumTime ? 1 : -1));
-		
+
+		classifyHopos();
+
 		speedChanges.sort(SortUtil.svSort);
 		
 		if (traceCheck) trace('loading chart took: ' + (Sys.time() - cpuTime));
@@ -1799,7 +1808,12 @@ class PlayState extends MusicBeatState
 		if (generatedMusic)
 		{
 			if (!inCutscene) keyShit();
-			
+			if (strumMode && !inCutscene)
+			{
+				strumInput();
+				tapInput();
+			}
+
 			var i:Int = notes.length;
 			while (--i >= 0)
 			{
@@ -2720,7 +2734,31 @@ class PlayState extends MusicBeatState
 			scripts.call('onInputPress', [key]);
 			return;
 		}
-		
+
+		// strum mode: pressing a fret alone never hits or ghost-misses; it just holds the fret.
+		// the strum key (see strumInput) does the actual hitting.
+		if (strumMode)
+		{
+			if (generatedMusic && !endingSong)
+			{
+				for (field in playFields.members)
+				{
+					if (!field.canInput() || !field.playAnims) continue;
+
+					var strum = field.members[key];
+					if (strum != null)
+					{
+						strum.playAnim('pressed');
+						strum.resetAnim = 0;
+					}
+				}
+			}
+
+			scripts.call('onKeyPress', [key]);
+			scripts.call('onInputPress', [key]);
+			return;
+		}
+
 		var prevTime:Float = Conductor.songPosition;
 		if (audio.inst?.playing) Conductor.songPosition = @:privateAccess audio.inst._channel.position;
 		// subtract latency
@@ -2816,9 +2854,110 @@ class PlayState extends MusicBeatState
 		scripts.call('onInputRelease', [key]);
 	}
 	
+	// GH note types. Empty string ("") is a normal strum note.
+	public static inline final NT_TAP:String = "Tap";
+	public static inline final NT_HOPO:String = "HOPO";
+	public static inline final NT_OPEN:String = "Open";
+
+	/**
+	 * GH charts don't store HOPOs — they store a force flag that inverts a spacing rule — so the
+	 * conversion resolves the two into a note type and that result is authoritative. Deriving it from
+	 * spacing here instead would disagree with the gems (drawn from noteType) on exactly the notes the
+	 * charter overrode.
+	 */
+	function classifyHopos():Void
+	{
+		for (q in queueNotes)
+			if (!q.isSustainNote) q.isHopo = (q.noteType == NT_HOPO);
+	}
+
+	/**
+	 * Whether a note can be hit by holding its fret alone: Tap always, HOPO only while comboing.
+	 */
+	function isFrettable(note:Note):Bool
+	{
+		return note.noteType == NT_TAP || (note.isHopo && combo > 0);
+	}
+
+	function pickTopNote(field:PlayField, lane:Int, filter:Note->Bool):Note
+	{
+		var topNote:Note = null;
+		for (note in field.getTapNotes(lane))
+		{
+			if (!filter(note)) continue;
+
+			final higherPriority:Bool = (topNote == null || note.hitPriority > topNote.hitPriority);
+			if (higherPriority || (!higherPriority && note.strumTime < topNote.strumTime)) topNote = note;
+		}
+		return topNote;
+	}
+
+	/**
+	 * Strum key pressed: held frets hit the top non-open note in each held lane (chords included),
+	 * no frets held hits Open notes.
+	 */
+	function strumInput():Void
+	{
+		if (cpuControlled || paused || !startedCountdown || endingSong || !generatedMusic) return;
+		if (!controls.checkCustom('note_strum-press')) return; // strum just pressed this frame?
+
+		for (field in playFields.members)
+		{
+			if (!field.canInput()) continue;
+
+			var anyFretHeld:Bool = false;
+			for (lane in 0...field.keyCount)
+				if (input.inputPressed(lane)) anyFretHeld = true;
+
+			if (anyFretHeld)
+			{
+				// held frets -> hit the fretted (non-open) notes
+				for (lane in 0...field.keyCount)
+				{
+					if (!input.inputPressed(lane)) continue;
+
+					var topNote:Note = pickTopNote(field, lane, (n) -> n.noteType != NT_OPEN);
+					if (topNote != null) field.onNoteHit.dispatch(topNote, field);
+				}
+			}
+			else
+			{
+				// no frets held -> hit open notes across all lanes
+				for (lane in 0...field.keyCount)
+				{
+					var topNote:Note = pickTopNote(field, lane, (n) -> n.noteType == NT_OPEN);
+					if (topNote != null) field.onNoteHit.dispatch(topNote, field);
+				}
+			}
+		}
+
+		scripts.call('onStrum', []);
+	}
+
+	/**
+	 * Taps and chaining HOPOs hit on the fret alone. Every frame, so presses and holds both work.
+	 */
+	function tapInput():Void
+	{
+		if (cpuControlled || paused || !startedCountdown || endingSong || !generatedMusic) return;
+
+		for (field in playFields.members)
+		{
+			if (!field.canInput()) continue;
+
+			for (lane in 0...field.keyCount)
+			{
+				if (!input.inputPressed(lane)) continue; // fret not held
+
+				var topNote:Note = pickTopNote(field, lane, isFrettable);
+				if (topNote != null) field.onNoteHit.dispatch(topNote, field);
+			}
+		}
+	}
+
 	// Hold notes
 	var holders:Array<Character> = [];
-	
+
 	function keyShit():Void
 	{
 		// HOLDING

@@ -24,6 +24,8 @@ typedef Song =
 	
 	var keys:Int;
 	var lanes:Int;
+
+	var ?strumMode:Bool;
 	
 	var player1:String;
 	var player2:String;

@@ -1,0 +1,7 @@
+{
+	displayName: "One",
+	artists: ["Metallica"],
+	charters: ["Guitar Hero 3"],
+	difficulties: ["Normal", "Hard"],
+	freeplayColor: "#505A6E"
+}

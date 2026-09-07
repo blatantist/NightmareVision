@@ -10,6 +10,12 @@ on: # Workflow triggers on both when a commit is pushed, or when a pull request 
             - dev
     
     workflow_dispatch: # Run workflow manually from the actions tab.
+        inputs:
+            buildFlags:
+                description: extra lime defines, e.g. "SOMETHING" (optional)
+                required: false
+                type: string
+                default: ''
     workflow_call: #For release builds
         inputs:
             buildFlags:
@@ -73,7 +79,7 @@ jobs: # FUCK MY LIFE BROOOOO
                 Run haxelib run lime rebuild cpp -release
                 
             - name: Compile build
-              run: haxelib run lime build windows -D ${{inputs.buildFlags}}
+              run: haxelib run lime build windows ${{ inputs.buildFlags != '' && format('-D {0}', inputs.buildFlags) || '' }}
             - name: Publish artifact
               uses: actions/upload-artifact@v7.0.1
               with:
@@ -126,7 +132,7 @@ jobs: # FUCK MY LIFE BROOOOO
                  exit 1
                fi
             - name: Compile build
-              run: haxelib run lime build Project.xml linux -D ${{inputs.buildFlags}}
+              run: haxelib run lime build Project.xml linux ${{ inputs.buildFlags != '' && format('-D {0}', inputs.buildFlags) || '' }}
             - name: Publish artifact
               uses: actions/upload-artifact@v7.0.1
               with:
@@ -163,7 +169,7 @@ jobs: # FUCK MY LIFE BROOOOO
                  exit 1
                fi
             - name: Compile build
-              run: arch -x86_64 haxelib run lime build Project.xml mac -D ${{inputs.buildFlags}}
+              run: arch -x86_64 haxelib run lime build Project.xml mac ${{ inputs.buildFlags != '' && format('-D {0}', inputs.buildFlags) || '' }}
             - name: Publish artifact
               uses: actions/upload-artifact@v7.0.1
               with:
@@ -200,7 +206,7 @@ jobs: # FUCK MY LIFE BROOOOO
                  exit 1
                fi
             - name: Compile build
-              run: haxelib run lime build Project.xml mac -D ${{inputs.buildFlags}}
+              run: haxelib run lime build Project.xml mac ${{ inputs.buildFlags != '' && format('-D {0}', inputs.buildFlags) || '' }}
             - name: Publish artifact
               uses: actions/upload-artifact@v7.0.1
               with:
