@@ -221,6 +221,7 @@ function applyPartSizes()
 		sidesSpr.y = hl - sidesSpr.height + SIDE_Y;
 	}
 
+	for (i in 0...stringSprs.length)
 	{
 		var st = stringSprs[i];
 		if (st == null) continue;
@@ -319,6 +320,7 @@ function onCreatePost()
 	applyGemPath();
 }
 
+function onPopUpScorePost(note, daRating, ratingGraphic, ratingNumGroup)
 {
 	if (ratingGraphic != null) ratingGraphic.x += SCORE_UI_X;
 
@@ -337,6 +339,7 @@ function onSpawnNote(note)
 
 	note.cameras = note.isSustainNote ? [laneCamera] : [gemCamera];
 
+	if (!note.isSustainNote)
 	{
 		var want = 'scroll';
 		if (note.noteType == 'Tap') want = 'scrollTap';
