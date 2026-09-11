@@ -173,7 +173,7 @@ class MainMenuState extends MusicBeatState
 					menuItems.forEachAlive(item -> if (item != selectedObj) FlxTween.tween(item, {alpha: 0}, 0.4, {ease: FlxEase.quadOut}));
 				}
 			}
-			else if (FlxG.keys.anyJustPressed(debugKeys))
+			else if (FlxG.keys.anyJustPressed(debugKeys) || controls.padJustPressed('debug_1'))
 			{
 				canInteract = true;
 				FlxG.switchState(MasterEditorMenu.new);

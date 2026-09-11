@@ -224,11 +224,28 @@ class ClientPrefs
 	public static var defaultKeys:Map<Action, Array<FlxKey>> = null;
 	
 	public static var gamepadBinds:Map<Action, Array<FlxGamepadInputID>> = [
-		'note_up' => [DPAD_UP, Y],
-		'note_down' => [DPAD_DOWN, A],
-		'note_left' => [DPAD_LEFT, X],
-		'note_right' => [DPAD_RIGHT, B],
-		'note_dodge' => [GUIDE]
+		'note_up' => [-1, -1],
+		'note_down' => [-1, -1],
+		'note_left' => [-1, -1],
+		'note_right' => [-1, -1],
+		'note_dodge' => [-1, -1],
+		'ui_up' => [-1, -1],
+		'ui_down' => [-1, -1],
+		'ui_left' => [-1, -1],
+		'ui_right' => [-1, -1],
+		'accept' => [-1, -1],
+		'back' => [-1, -1],
+		'pause' => [-1, -1],
+		'reset' => [-1, -1],
+		'fullscreen' => [-1, -1],
+		'volume_mute' => [-1, -1],
+		'volume_up' => [-1, -1],
+		'volume_down' => [-1, -1],
+		'debug_1' => [-1, -1],
+		'debug_2' => [-1, -1],
+		'switch_debug_display' => [-1, -1],
+		'soft_reload' => [-1, -1],
+		'hard_reload' => [-1, -1]
 	];
 	
 	// using a separate map for custom binds to ensure the engine doesnt get confused on what binds are real and temporary
@@ -259,7 +276,7 @@ class ClientPrefs
 	public static function loadDefaultKeys()
 	{
 		defaultKeys = keyBinds.copy();
-		defaultGamepadBinds = gamepadBinds.copy();
+		defaultGamepadBinds = [for (k => v in gamepadBinds) k => v.copy()];
 	}
 	
 	// Editor Colours ------------------------------------------------------------------------//
@@ -307,7 +324,7 @@ class ClientPrefs
 		var save:FlxSave = new FlxSave();
 		save.bind('controls_v2');
 		save.data.customControls = keyBinds;
-		save.data.customGamepadControls = gamepadBinds;
+		save.data.customGamepadControlsV2 = gamepadBinds;
 		save.close();
 	}
 	
@@ -353,7 +370,7 @@ class ClientPrefs
 		var save:FlxSave = new FlxSave();
 		save.bind('controls_v2');
 		if (save != null && save.data.customControls != null) CoolUtil.copyMapValues(save.data.customControls, keyBinds);
-		if (save != null && save.data.customGamepadControls != null) CoolUtil.copyMapValues(save.data.customGamepadControls, gamepadBinds);
+		if (save != null && save.data.customGamepadControlsV2 != null) CoolUtil.copyMapValues(save.data.customGamepadControlsV2, gamepadBinds);
 		reloadControls();
 		
 		save = FlxDestroyUtil.destroy(save);

@@ -1723,9 +1723,9 @@ class PlayState extends MusicBeatState
 		
 		if (canAccessEditors && !endingSong && !inCutscene)
 		{
-			if (FlxG.keys.anyJustPressed(debugKeysChart)) openChartEditor();
-			
-			if (FlxG.keys.anyJustPressed(debugKeysCharacter)) openCharacterEditor();
+			if (FlxG.keys.anyJustPressed(debugKeysChart) || controls.padJustPressed('debug_1')) openChartEditor();
+
+			if (FlxG.keys.anyJustPressed(debugKeysCharacter) || controls.padJustPressed('debug_2')) openCharacterEditor();
 		}
 		
 		if (healthBounds.max > healthBounds.min && health > healthBounds.max) health = healthBounds.max;

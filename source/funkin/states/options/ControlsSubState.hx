@@ -123,11 +123,7 @@ class ControlsSubState extends MusicBeatSubstate
 		
 		final group = new ControlsGroup("NOTES", NOTES_GROUP, 0);
 		controlsGroup.add(group);
-		
-		resetGamepadLabel = new Alphabet(0, 80 * group.groupLastIndex, "Reset to Default Buttons", true);
-		resetGamepadLabel.screenCenter(X);
-		add(resetGamepadLabel);
-		
+
 		final group = new ControlsGroup("UI", UI_GROUP, group.groupLastIndex);
 		controlsGroup.add(group);
 
@@ -143,6 +139,10 @@ class ControlsSubState extends MusicBeatSubstate
 		resetKeysLabel = new Alphabet(0, 80 * group.groupLastIndex, "Reset to Default Keys", true);
 		resetKeysLabel.screenCenter(X);
 		add(resetKeysLabel);
+
+		resetGamepadLabel = new Alphabet(0, 80 * group.groupLastIndex, "Reset to Default Buttons", true);
+		resetGamepadLabel.screenCenter(X);
+		add(resetGamepadLabel);
 		
 		final gamepad = FlxG.gamepads.getFirstActiveGamepad();
 		
@@ -174,18 +174,13 @@ class ControlsSubState extends MusicBeatSubstate
 		optionsList = [];
 		for (group in controlsGroup)
 		{
-			if (device == Keys || group.label.text == "NOTES")
+			for (option in group.options)
 			{
-				group.visible = true;
-				for (option in group.options)
-				{
-					optionsList.push(option);
-					option.refreshAll(device);
-				}
+				optionsList.push(option);
+				option.refreshAll(device);
 			}
-			else group.visible = false;
 		}
-		if (index > optionsList.length) index = optionsList.length;
+		if (index >= optionsList.length) index = optionsList.length;
 		scriptGroup.set('optionsList', optionsList);
 	}
 	
@@ -213,12 +208,13 @@ class ControlsSubState extends MusicBeatSubstate
 			case SELECT:
 				// check for device changes
 				final key = FlxG.keys.firstJustPressed();
-				final gamepad = FlxG.gamepads.getFirstActiveGamepad();
-				
+				var gamepad = FlxG.gamepads.getFirstActiveGamepad();
+				if (gamepad != null && gamepad.firstJustPressedID() == -1) gamepad = null;
+
 				device = switch (device)
 				{
 					case Keys if (gamepad != null): Gamepad(gamepad.id);
-					case Gamepad(_) if (key > -1): Keys;
+					case Gamepad(_) if (key > -1 && !isMenuKey(key)): Keys;
 					case Gamepad(id) if (gamepad != null && id != gamepad.id): Gamepad(gamepad.id);
 					case d: d;
 				}
@@ -255,7 +251,7 @@ class ControlsSubState extends MusicBeatSubstate
 						case Keys:
 							ClientPrefs.keyBinds = ClientPrefs.defaultKeys.copy();
 						case Gamepad(_):
-							ClientPrefs.gamepadBinds = ClientPrefs.defaultGamepadBinds.copy();
+							ClientPrefs.gamepadBinds = [for (k => v in ClientPrefs.defaultGamepadBinds) k => v.copy()];
 					}
 					for (option in optionsList)
 						option.refreshAll(device);
@@ -309,6 +305,17 @@ class ControlsSubState extends MusicBeatSubstate
 		camPos.y = FlxMath.lerp(camPos.y, target.y + 25, FlxMath.getElapsedLerp(0.16, elapsed));
 	}
 	
+	// so an unbound pad can still be navigated w/ the keyboard
+	function isMenuKey(key:Int):Bool
+	{
+		for (action in ['ui_up', 'ui_down', 'ui_left', 'ui_right', 'accept', 'back'])
+		{
+			final keys = ClientPrefs.keyBinds.get(action);
+			if (keys != null && keys.contains(key)) return true;
+		}
+		return false;
+	}
+
 	function set_device(device:Device):Device
 	{
 		if (this.device != device)
@@ -495,7 +502,10 @@ class ControlsOption extends FlxSpriteContainer
 		binds.members[index].changeText(switch device
 		{
 			case Keys: InputFormatter.getKeyName(inputID);
-			case Gamepad(id): FlxG.gamepads.getByID(id).getInputLabel(inputID).toUpperCase();
+			case Gamepad(id):
+				final pad = FlxG.gamepads.getByID(id);
+				final label = pad != null ? pad.getInputLabel(inputID) : null;
+				label != null ? label.toUpperCase() : "---";
 		});
 		
 		binds.members[index].alpha = alpha;

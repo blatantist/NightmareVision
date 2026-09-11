@@ -730,22 +730,59 @@ class Controls extends FlxActionSet
 	
 	public function addDefaultGamepad(id):Void
 	{
-		var binds = ClientPrefs.gamepadBinds;
+		final binds = ClientPrefs.gamepadBinds;
+		function bound(action:Action):Array<FlxGamepadInputID>
+		{
+			return binds.exists(action) ? binds.get(action).filter(b -> b != -1) : [];
+		}
+
 		addGamepadLiteral(id, [
-			Control.ACCEPT => [FlxGamepadInputID.ACCEPT],
-			Control.BACK => [CANCEL],
-			Control.UI_UP => [DPAD_UP, LEFT_STICK_DIGITAL_UP],
-			Control.UI_DOWN => [DPAD_DOWN, LEFT_STICK_DIGITAL_DOWN],
-			Control.UI_LEFT => [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT],
-			Control.UI_RIGHT => [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT],
-			Control.NOTE_UP => binds.get(Action.NOTE_UP),
-			Control.NOTE_DOWN => binds.get(Action.NOTE_DOWN),
-			Control.NOTE_LEFT => binds.get(Action.NOTE_LEFT),
-			Control.NOTE_RIGHT => binds.get(Action.NOTE_RIGHT),
-			Control.NOTE_DODGE => binds.get(Action.NOTE_DODGE),
-			Control.PAUSE => [START],
-			Control.RESET => [8]
+			Control.ACCEPT => bound(Action.ACCEPT),
+			Control.BACK => bound(Action.BACK),
+			Control.UI_UP => bound(Action.UI_UP),
+			Control.UI_DOWN => bound(Action.UI_DOWN),
+			Control.UI_LEFT => bound(Action.UI_LEFT),
+			Control.UI_RIGHT => bound(Action.UI_RIGHT),
+			Control.NOTE_UP => bound(Action.NOTE_UP),
+			Control.NOTE_DOWN => bound(Action.NOTE_DOWN),
+			Control.NOTE_LEFT => bound(Action.NOTE_LEFT),
+			Control.NOTE_RIGHT => bound(Action.NOTE_RIGHT),
+			Control.NOTE_DODGE => bound(Action.NOTE_DODGE),
+			Control.PAUSE => bound(Action.PAUSE),
+			Control.RESET => bound(Action.RESET),
+			Control.FULLSCREEN => bound(Action.FULLSCREEN),
+			Control.SWITCH_DEBUG_DISPLAY => bound(Action.SWITCH_DEBUG_DISPLAY),
+			Control.SOFT_RELOAD => bound(Action.SOFT_RELOAD),
+			Control.HARD_RELOAD => bound(Action.HARD_RELOAD)
 		]);
+
+		for (name in customActions.keys())
+		{
+			if (name.endsWith('-release') || name.endsWith('-press')) continue;
+
+			final buttons = bound(name);
+			addButtons(customActions.get(name), buttons, PRESSED, id);
+			addButtons(customActions.get('$name-press'), buttons, JUST_PRESSED, id);
+			addButtons(customActions.get('$name-release'), buttons, JUST_RELEASED, id);
+		}
+	}
+	
+	/**
+	 * For binds the engine reads as raw keys (volume, debug keys), which have no FlxAction.
+	 */
+	public function padJustPressed(action:Action):Bool
+	{
+		final binds = ClientPrefs.gamepadBinds.get(action);
+		if (binds == null) return false;
+
+		for (id in gamepadsAdded)
+		{
+			final pad = FlxG.gamepads.getByID(id);
+			if (pad == null) continue;
+			for (button in binds)
+				if (button != -1 && pad.checkStatus(button, JUST_PRESSED)) return true;
+		}
+		return false;
 	}
 	
 	/**

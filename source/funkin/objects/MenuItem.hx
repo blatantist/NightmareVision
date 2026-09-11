@@ -7,6 +7,11 @@ import flixel.util.FlxColor;
 
 class MenuItem extends FlxSprite
 {
+	/**
+	 * Height every week's art is drawn at, whatever resolution its graphic is authored at
+	 */
+	public static inline var ROW_HEIGHT:Float = 89;
+	
 	public var targetY:Float = 0;
 	public var flashingInt:Int = 0;
 	
@@ -14,6 +19,15 @@ class MenuItem extends FlxSprite
 	{
 		super(x, y);
 		loadGraphic(Paths.image('menus/story/weeks/' + weekName));
+		
+		// Same deal as HealthIcon: week art can ship at its source resolution and gets scaled to
+		// the menu's row height here instead of being pre-shrunk.
+		{
+			final s:Float = ROW_HEIGHT / frameHeight;
+			scale.set(s, s);
+			updateHitbox();
+			antialiasing = ClientPrefs.globalAntialiasing;
+		}
 	}
 	
 	private var isFlashing:Bool = false;

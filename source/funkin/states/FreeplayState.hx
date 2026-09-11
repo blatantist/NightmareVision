@@ -56,6 +56,11 @@ class FreeplayState extends MusicBeatState
 	public var intendedScore:Int = 0;
 	public var intendedRating:Float = 0;
 	
+	/**
+	 * So freeplay icon matches the size of the stock character icons
+	 */
+	public static inline var FREEPLAY_ICON_SIZE:Float = 110;
+	
 	public var grpSongs:FlxTypedGroup<Alphabet>;
 	public var grpIcons:FlxTypedGroup<HealthIcon>;
 	public var curPlaying:Bool = false;
@@ -213,6 +218,10 @@ class FreeplayState extends MusicBeatState
 			
 			Mods.currentModDirectory = songs[i].folder;
 			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
+			// Character icons carry ~27% transparent margin; album art is full bleed, so a 150px
+			// box reads far heavier next to the song name. Draw the box at the size a character
+			// icon's artwork actually occupies.
+			icon.size = FREEPLAY_ICON_SIZE;
 			icon.sprTracker = songText;
 			
 			grpIcons.add(icon);

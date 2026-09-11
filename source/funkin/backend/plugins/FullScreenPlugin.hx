@@ -47,5 +47,10 @@ class FullScreenPlugin extends FlxBasic
 		}
 		
 		if (FlxG.save.data != null) FlxG.save.data.fullscreen = FlxG.fullscreen;
+
+		// sound tray only listens to keys so pad volume goes here
+		if (Controls.instance.padJustPressed('volume_mute')) FlxG.sound.toggleMuted();
+		if (Controls.instance.padJustPressed('volume_up')) FlxG.sound.changeVolume(0.1);
+		if (Controls.instance.padJustPressed('volume_down')) FlxG.sound.changeVolume(-0.1);
 	}
 }

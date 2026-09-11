@@ -19,7 +19,7 @@ class HealthIcon extends FlxSprite implements IUiSprite
 	 * 
 	 * Used when `sprTracker` is not null.
 	 */
-	public var sprOffsets(default, null):FlxPoint = FlxPoint.get(10, -30);
+	public var sprOffsets(default, null):FlxPoint = FlxPoint.get(10, 0);
 	
 	/**
 	 * The icons current character name
@@ -28,6 +28,24 @@ class HealthIcon extends FlxSprite implements IUiSprite
 	
 	@:allow(funkin.states.editors.ChartEditorState)
 	var updateOffset:Bool = true;
+	
+	/**
+	 * Size every icon is drawn at, whatever resolution its graphic is authored at
+	 */
+	public static inline var ICON_SIZE:Float = 150;
+	
+	/**
+	 * Size this icon is drawn at. Defaults to `ICON_SIZE`; menus that want a smaller icon set it
+	 * rather than scaling the sprite, so the tracker offsets stay correct.
+	 */
+	public var size(default, set):Float = ICON_SIZE;
+	
+	function set_size(value:Float):Float
+	{
+		size = value;
+		if (characterName != '') changeIcon(characterName, true);
+		return value;
+	}
 	
 	var iconOffsets:Array<Float> = [0, 0];
 	
@@ -81,7 +99,10 @@ class HealthIcon extends FlxSprite implements IUiSprite
 	{
 		super.update(elapsed);
 		
-		if (sprTracker != null) setPosition(sprTracker.x + sprTracker.width + sprOffsets.x, sprTracker.y + sprOffsets.y);
+		// Centre on the tracked sprite rather than leaning on a magic offset that only lined up at
+		// one icon size (the old -30 was exactly this for a 150px icon on a 90px tall row).
+		if (sprTracker != null) setPosition(sprTracker.x + sprTracker.width + sprOffsets.x,
+			sprTracker.y + ((sprTracker.height - height) * 0.5) + sprOffsets.y);
 	}
 	
 	/**
@@ -101,8 +122,14 @@ class HealthIcon extends FlxSprite implements IUiSprite
 		final graphic = Paths.image(name, null, false);
 		
 		loadGraphic(graphic, true, Math.floor(graphic.width / frameCount), Math.floor(graphic.height));
-		iconOffsets[0] = (width - 150) / 2;
-		iconOffsets[1] = (width - 150) / 2;
+		
+		// Icons authored above the standard size (album art, for instance) are scaled here rather
+		// than being downsampled on disk, so the source stays available for larger UI.
+		final iconScale:Float = size / frameHeight;
+		scale.set(iconScale, iconScale);
+		
+		iconOffsets[0] = ((frameWidth * iconScale) - size) / 2;
+		iconOffsets[1] = ((frameWidth * iconScale) - size) / 2;
 		updateHitbox();
 		
 		var c = [];
@@ -121,10 +148,13 @@ class HealthIcon extends FlxSprite implements IUiSprite
 	{
 		super.updateHitbox();
 		
+		// ADD to the offset super just set — it carries the compensation for scaling about the
+		// frame centre (-0.5 * (width - frameWidth)). Overwriting it threw that away, which only
+		// went unnoticed while every icon was 150px at scale 1 and the compensation was zero.
 		if (updateOffset)
 		{
-			offset.x = iconOffsets[0];
-			offset.y = iconOffsets[1];
+			offset.x += iconOffsets[0];
+			offset.y += iconOffsets[1];
 		}
 	}
 	
