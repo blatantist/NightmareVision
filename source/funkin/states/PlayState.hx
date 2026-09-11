@@ -2854,104 +2854,174 @@ class PlayState extends MusicBeatState
 		scripts.call('onInputRelease', [key]);
 	}
 	
-	// GH note types. Empty string ("") is a normal strum note.
+	// gh note types, empty string ("") is a normal strum note
 	public static inline final NT_TAP:String = "Tap";
 	public static inline final NT_HOPO:String = "HOPO";
 	public static inline final NT_OPEN:String = "Open";
 
-	/**
-	 * GH charts don't store HOPOs — they store a force flag that inverts a spacing rule — so the
-	 * conversion resolves the two into a note type and that result is authoritative. Deriving it from
-	 * spacing here instead would disagree with the gems (drawn from noteType) on exactly the notes the
-	 * charter overrode.
-	 */
+	// how long to give hopo/tap overstrum protection
+	public static inline final HOPO_LENIENCY:Float = 80;
+
+	// how long to wait for fret press before registering overstrum
+	public static inline final STRUM_LENIENCY:Float = 50;
+
+	// chord leniency (pressing one fret then another instead of pressing at the same time)
+	public static inline final CHORD_TOLERANCE:Float = 1;
+
+	var lastFretHitTime:Float = Math.NEGATIVE_INFINITY;
+	var pendingStrumTime:Float = Math.NEGATIVE_INFINITY;
+
+	// hopos aren't charted, theyre detected by note spacing, like gh does
 	function classifyHopos():Void
 	{
 		for (q in queueNotes)
 			if (!q.isSustainNote) q.isHopo = (q.noteType == NT_HOPO);
 	}
 
-	/**
-	 * Whether a note can be hit by holding its fret alone: Tap always, HOPO only while comboing.
-	 */
+	// check if note needs strum
 	function isFrettable(note:Note):Bool
 	{
 		return note.noteType == NT_TAP || (note.isHopo && combo > 0);
 	}
 
-	function pickTopNote(field:PlayField, lane:Int, filter:Note->Bool):Note
+	// get next chord in hit window
+	function nextChord(field:PlayField, open:Bool):Array<Note>
 	{
-		var topNote:Note = null;
-		for (note in field.getTapNotes(lane))
+		var perLane:Array<Note> = [];
+		var first:Float = Math.POSITIVE_INFINITY;
+		for (lane in 0...field.keyCount)
 		{
-			if (!filter(note)) continue;
+			var top:Note = null;
+			for (note in field.getTapNotes(lane))
+				if ((note.noteType == NT_OPEN) == open && (top == null || note.strumTime < top.strumTime)) top = note;
 
-			final higherPriority:Bool = (topNote == null || note.hitPriority > topNote.hitPriority);
-			if (higherPriority || (!higherPriority && note.strumTime < topNote.strumTime)) topNote = note;
+			if (top == null) continue;
+			perLane.push(top);
+			if (top.strumTime < first) first = top.strumTime;
 		}
-		return topNote;
+		return [for (note in perLane) if (note.strumTime - first <= CHORD_TOLERANCE) note];
+	}
+
+	/** Highest held fret, or -1. */
+	function heldLane(field:PlayField):Int
+	{
+		var lane:Int = field.keyCount;
+		while (--lane >= 0)
+			if (input.inputPressed(lane)) return lane;
+		return -1;
 	}
 
 	/**
-	 * Strum key pressed: held frets hit the top non-open note in each held lane (chords included),
-	 * no frets held hits Open notes.
+	 * gh fret rules:
+     * single note - the highest held fret must match the note
+	 * chord - the held frets must match chord exactly
 	 */
+	function fretsMatch(field:PlayField, chord:Array<Note>):Bool
+	{
+		if (chord.length == 1) return heldLane(field) == chord[0].noteData;
+
+		var held:Int = 0;
+		for (lane in 0...field.keyCount)
+			if (input.inputPressed(lane)) held++;
+		if (held != chord.length) return false;
+
+		for (note in chord)
+			if (!input.inputPressed(note.noteData)) return false;
+		return true;
+	}
+
+	// resolve strum against next chord
+	function strumHit(field:PlayField):Bool
+	{
+		final open:Bool = heldLane(field) == -1;
+		final chord = nextChord(field, open);
+		if (chord.length == 0 || (!open && !fretsMatch(field, chord))) return false;
+
+		for (note in chord)
+			field.onNoteHit.dispatch(note, field);
+		return true;
+	}
+
+    // strum key/overstrum input
 	function strumInput():Void
 	{
 		if (cpuControlled || paused || !startedCountdown || endingSong || !generatedMusic) return;
-		if (!controls.checkCustom('note_strum-press')) return; // strum just pressed this frame?
 
-		for (field in playFields.members)
+		final strummed:Bool = controls.checkCustom('note_strum-press');
+		final pending:Bool = pendingStrumTime != Math.NEGATIVE_INFINITY;
+		if (!strummed && !pending) return;
+
+		if (strummed)
 		{
-			if (!field.canInput()) continue;
-
-			var anyFretHeld:Bool = false;
-			for (lane in 0...field.keyCount)
-				if (input.inputPressed(lane)) anyFretHeld = true;
-
-			if (anyFretHeld)
-			{
-				// held frets -> hit the fretted (non-open) notes
-				for (lane in 0...field.keyCount)
-				{
-					if (!input.inputPressed(lane)) continue;
-
-					var topNote:Note = pickTopNote(field, lane, (n) -> n.noteType != NT_OPEN);
-					if (topNote != null) field.onNoteHit.dispatch(topNote, field);
-				}
-			}
-			else
-			{
-				// no frets held -> hit open notes across all lanes
-				for (lane in 0...field.keyCount)
-				{
-					var topNote:Note = pickTopNote(field, lane, (n) -> n.noteType == NT_OPEN);
-					if (topNote != null) field.onNoteHit.dispatch(topNote, field);
-				}
-			}
+			if (pending) resolveOverstrum(); // strummed again before the last one found its frets
+			pendingStrumTime = Conductor.songPosition;
 		}
 
-		scripts.call('onStrum', []);
+		var anyHit:Bool = false;
+		for (field in playFields.members)
+			if (field.canInput() && strumHit(field)) anyHit = true;
+
+		if (strummed) scripts.call('onStrum', []);
+
+		if (anyHit || ClientPrefs.ghostTapping) pendingStrumTime = Math.NEGATIVE_INFINITY;
+		else if (strummed && Conductor.songPosition - lastFretHitTime <= HOPO_LENIENCY)
+		{
+			// each note hit forgives one oversstrum
+			lastFretHitTime = Math.NEGATIVE_INFINITY;
+			pendingStrumTime = Math.NEGATIVE_INFINITY;
+		}
+		else if (Conductor.songPosition - pendingStrumTime > STRUM_LENIENCY) resolveOverstrum();
 	}
 
-	/**
-	 * Taps and chaining HOPOs hit on the fret alone. Every frame, so presses and holds both work.
-	 */
+	function resolveOverstrum():Void
+	{
+		pendingStrumTime = Math.NEGATIVE_INFINITY;
+		for (field in playFields.members)
+			if (field.canInput() && !holdingSustain(field)) overstrum(field, heldLane(field));
+	}
+
+	// dont overstrum on sustains
+	function holdingSustain(field:PlayField):Bool
+	{
+		for (note in notes.members)
+		{
+			if (note != null && note.alive && note.isSustainNote && note.playField == field && note.parent != null
+				&& note.parent.wasGoodHit && !note.wasGoodHit && !note.blockHit && input.inputPressed(note.noteData)) return true;
+		}
+		return false;
+	}
+
+	//overstrum drops combo on nothing to hit, misses on notes
+	function overstrum(field:PlayField, heldLane:Int):Void
+	{
+		if (heldLane != -1)
+		{
+			field.onMissPress.dispatch(heldLane);
+			scripts.call('noteMissPress', [heldLane]);
+		}
+		else combo = 0;
+
+		scripts.call('onOverstrum', [heldLane]);
+	}
+
+	// taps/hopos dont need strum
 	function tapInput():Void
 	{
 		if (cpuControlled || paused || !startedCountdown || endingSong || !generatedMusic) return;
 
 		for (field in playFields.members)
 		{
-			if (!field.canInput()) continue;
+			if (!field.canInput() || heldLane(field) == -1) continue;
 
-			for (lane in 0...field.keyCount)
-			{
-				if (!input.inputPressed(lane)) continue; // fret not held
+			final chord = nextChord(field, false);
+			if (chord.length == 0 || !Lambda.foreach(chord, isFrettable) || !fretsMatch(field, chord)) continue;
 
-				var topNote:Note = pickTopNote(field, lane, isFrettable);
-				if (topNote != null) field.onNoteHit.dispatch(topNote, field);
-			}
+			for (note in chord)
+				field.onNoteHit.dispatch(note, field);
+
+			// a strum still waiting on its frets was for this note; otherwise the next strum is forgiven
+			if (pendingStrumTime != Math.NEGATIVE_INFINITY) pendingStrumTime = Math.NEGATIVE_INFINITY;
+			else lastFretHitTime = Conductor.songPosition;
 		}
 	}
 
