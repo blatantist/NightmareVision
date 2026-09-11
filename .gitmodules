@@ -1,3 +1,6 @@
 [submodule "content/NMV-Base-Game"]
 	path = content/NMV-Base-Game
 	url = https://github.com/DuskieWhy/NMV-Base-Game
+[submodule "content/GuitarHero"]
+	path = content/GuitarHero
+	url = https://github.com/blatantist/NMV-GuitarHero.git
