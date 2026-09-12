@@ -26,7 +26,7 @@ env:
     HAXE_VERSION: 4.3.7
     HXCPP_COMPILE_CACHE: ${{ github.workspace }}/.hxcpp_cache
     LIME_HASH: 6421de16b9dfa4fb55c19f12db65d392a57585c8
-    RELEASE_TAG: 0.6 # change this every update
+    RELEASE_TAG: v0.6 # change this every update to match an existing tag with a release
 
 permissions:
     contents: write # gh release upload
