@@ -621,7 +621,10 @@ class Note extends funkin.game.modchart.ModchartNote
 	
 	public inline function isLate():Bool
 	{
-		return (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit && (parent?.coyoteProgress ?? 1) >= 1);
+		// only apply coyote grace to tails whose heads were hit
+		final coyoteDone:Bool = parent == null || !parent.wasGoodHit || parent.coyoteProgress >= 1;
+		
+		return (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit && coyoteDone);
 	}
 	
 	override function drawSimple(camera:FlxCamera)

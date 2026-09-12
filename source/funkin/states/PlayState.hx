@@ -1855,12 +1855,12 @@ class PlayState extends MusicBeatState
 				
 				if (daNote.isSustainNote)
 				{
-					final futureSongPos = Conductor.getBeat(Conductor.songPosition + daNote.sustainLength);
+					final futureBeat = Conductor.getBeat(Conductor.songPosition + daNote.sustainLength);
 					
 					final visPos = ((daNote.visualTime + daNote.visualLength - Conductor.visualPosition) * songSpeed);
 					final diff = (daNote.strumTime + daNote.sustainLength - Conductor.songPosition);
 					
-					var nextPos = modManager.getPos(daNote.strumTime + daNote.sustainLength, visPos, diff, Conductor.getBeat(futureSongPos), daNote.noteData, daNote.lane, daNote);
+					var nextPos = modManager.getPos(daNote.strumTime + daNote.sustainLength, visPos, diff, futureBeat, daNote.noteData, daNote.lane, daNote);
 					
 					final rad = Math.atan2(nextPos.y - pos.y, nextPos.x - pos.x);
 					
@@ -2884,22 +2884,35 @@ class PlayState extends MusicBeatState
 		return note.noteType == NT_TAP || (note.isHopo && combo > 0);
 	}
 
+	// reused so the per-frame chord lookup doesn't allocate one array per lane
+	var _chordPerLane:Array<Note> = [];
+	
 	// get next chord in hit window
 	function nextChord(field:PlayField, open:Bool):Array<Note>
 	{
-		var perLane:Array<Note> = [];
-		var first:Float = Math.POSITIVE_INFINITY;
-		for (lane in 0...field.keyCount)
+		// only one pass over the field's notes, not per-lane
+		final perLane = _chordPerLane;
+		if (perLane.length != field.keyCount) perLane.resize(field.keyCount);
+		for (lane in 0...perLane.length)
+			perLane[lane] = null;
+		
+		for (note in field.notes)
 		{
-			var top:Note = null;
-			for (note in field.getTapNotes(lane))
-				if ((note.noteType == NT_OPEN) == open && (top == null || note.strumTime < top.strumTime)) top = note;
+			if (note == null || note.isSustainNote || !note.alive || note.wasGoodHit || note.tooLate || !note.canBeHit) continue;
+			if ((note.noteType == NT_OPEN) != open) continue;
+			
+			final lane = note.noteData;
+			if (lane < 0 || lane >= perLane.length) continue;
 
-			if (top == null) continue;
-			perLane.push(top);
-			if (top.strumTime < first) first = top.strumTime;
+			final top = perLane[lane];
+			if (top == null || note.strumTime < top.strumTime) perLane[lane] = note;
 		}
-		return [for (note in perLane) if (note.strumTime - first <= CHORD_TOLERANCE) note];
+		
+		var first:Float = Math.POSITIVE_INFINITY;
+		for (note in perLane)
+			if (note != null && note.strumTime < first) first = note.strumTime;
+		
+		return [for (note in perLane) if (note != null && note.strumTime - first <= CHORD_TOLERANCE) note];
 	}
 
 	/** Highest held fret, or -1. */
@@ -2983,10 +2996,10 @@ class PlayState extends MusicBeatState
 	// dont overstrum on sustains
 	function holdingSustain(field:PlayField):Bool
 	{
-		for (note in notes.members)
+		for (note in field.notes)
 		{
-			if (note != null && note.alive && note.isSustainNote && note.playField == field && note.parent != null
-				&& note.parent.wasGoodHit && !note.wasGoodHit && !note.blockHit && input.inputPressed(note.noteData)) return true;
+			if (note != null && note.isSustainNote && !note.blockHit && !note.wasGoodHit && note.alive && note.parent != null
+				&& note.parent.wasGoodHit && input.inputPressed(note.noteData)) return true;
 		}
 		return false;
 	}

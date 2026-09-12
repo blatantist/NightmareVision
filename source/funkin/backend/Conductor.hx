@@ -69,21 +69,33 @@ class Conductor
 	
 	public inline static function getBPMFromSeconds(time:Float)
 	{
-		var lastChange:BPMChangeEvent = null;
-		for (change in bpmChangeMap)
-		{
-			if (time >= change.songTime) lastChange = change;
-		}
-		
-		return (lastChange ?? {stepTime: 0, songTime: 0, bpm: bpm, stepCrotchet: stepCrotchet});
+		return getBPMChangeAt(time, true);
 	}
 	
-	public static function getBPMFromStep(step:Float)
+	public inline static function getBPMFromStep(step:Float)
 	{
+		return getBPMChangeAt(step, false);
+	}
+	
+	// binary search for bpm change
+	static function getBPMChangeAt(value:Float, seconds:Bool):BPMChangeEvent
+	{
+		var lo:Int = 0;
+		var hi:Int = bpmChangeMap.length - 1;
 		var lastChange:BPMChangeEvent = null;
-		for (change in bpmChangeMap)
+		
+		while (lo <= hi)
 		{
-			if (change.stepTime <= step) lastChange = change;
+			final mid:Int = (lo + hi) >> 1;
+			final change = bpmChangeMap[mid];
+			
+			if ((seconds ? change.songTime : change.stepTime) <= value)
+			{
+				lastChange = change;
+				lo = mid + 1;
+			}
+			else
+				hi = mid - 1;
 		}
 		
 		return (lastChange ?? {stepTime: 0, songTime: 0, bpm: bpm, stepCrotchet: stepCrotchet});
