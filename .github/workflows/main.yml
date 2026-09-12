@@ -1,7 +1,7 @@
 # FUCK MY LIFE BROOOOOOOOO.
 name: Binaries
 
-on: # Workflow triggers on both when a commit is pushed, or when a pull request is made.
+on: # Workflow triggers when a commit is pushed and when a pull request is made.
     push:
         branches: 
             - dev
@@ -9,14 +9,14 @@ on: # Workflow triggers on both when a commit is pushed, or when a pull request 
         branches:
             - dev
     
-    workflow_dispatch: # Run workflow manually from the actions tab.
+    workflow_dispatch: 
         inputs:
             buildFlags:
                 description: extra lime defines, e.g. "SOMETHING" (optional)
                 required: false
                 type: string
                 default: ''
-    workflow_call: #For release builds
+    workflow_call:
         inputs:
             buildFlags:
                 required: false
@@ -26,7 +26,7 @@ env:
     HAXE_VERSION: 4.3.7
     HXCPP_COMPILE_CACHE: ${{ github.workspace }}/.hxcpp_cache
     LIME_HASH: 6421de16b9dfa4fb55c19f12db65d392a57585c8
-    RELEASE_TAG: GH # zips are attached to this release; change it when you cut a new one
+    RELEASE_TAG: 0.6 # change this every update
 
 permissions:
     contents: write # gh release upload
