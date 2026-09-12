@@ -26,6 +26,10 @@ env:
     HAXE_VERSION: 4.3.7
     HXCPP_COMPILE_CACHE: ${{ github.workspace }}/.hxcpp_cache
     LIME_HASH: 6421de16b9dfa4fb55c19f12db65d392a57585c8
+    RELEASE_TAG: GH # zips are attached to this release; change it when you cut a new one
+
+permissions:
+    contents: write # gh release upload
 
 
 jobs: # FUCK MY LIFE BROOOOO
@@ -85,6 +89,16 @@ jobs: # FUCK MY LIFE BROOOOO
               with:
                 name: NightmareVision (Windows)
                 path: export/release/windows/bin
+            - name: Zip build
+              if: github.event_name != 'pull_request'
+              shell: pwsh
+              run: 7z a -tzip "NightmareVision-GH (Windows).zip" ./export/release/windows/bin/*
+            - name: Upload to release
+              if: github.event_name != 'pull_request'
+              shell: pwsh
+              env:
+                GH_TOKEN: ${{ github.token }}
+              run: gh release upload ${{ env.RELEASE_TAG }} "NightmareVision-GH (Windows).zip" --clobber
     #
     Linux:
         runs-on: ubuntu-24.04
@@ -138,6 +152,14 @@ jobs: # FUCK MY LIFE BROOOOO
               with:
                 name: NightmareVision (Linux)
                 path: export/release/linux/bin
+            - name: Zip build
+              if: github.event_name != 'pull_request'
+              run: cd export/release/linux/bin && zip -ry "$GITHUB_WORKSPACE/NightmareVision-GH (Linux).zip" .
+            - name: Upload to release
+              if: github.event_name != 'pull_request'
+              env:
+                GH_TOKEN: ${{ github.token }}
+              run: gh release upload ${{ env.RELEASE_TAG }} "NightmareVision-GH (Linux).zip" --clobber
     #
     Mac-Intel:
         runs-on: macos-26
@@ -175,6 +197,19 @@ jobs: # FUCK MY LIFE BROOOOO
               with:
                 name: NightmareVision (Mac Intel)
                 path: export/release/macos/bin
+            - name: Zip build
+              if: github.event_name != 'pull_request'
+              run: |
+                set -euo pipefail
+                cd export/release/macos/bin
+                app=$(ls -d *.app | head -1)
+                # ditto, not zip: keeps the .app bundle's symlinks and permissions intact
+                ditto -c -k --sequesterRsrc --keepParent "$app" "$GITHUB_WORKSPACE/NightmareVision-GH (Mac Intel).zip"
+            - name: Upload to release
+              if: github.event_name != 'pull_request'
+              env:
+                GH_TOKEN: ${{ github.token }}
+              run: gh release upload ${{ env.RELEASE_TAG }} "NightmareVision-GH (Mac Intel).zip" --clobber
     #
     Mac-ARM:
         runs-on: macos-26
@@ -212,3 +247,16 @@ jobs: # FUCK MY LIFE BROOOOO
               with:
                 name: NightmareVision (Mac ARM)
                 path: export/release/macos/bin
+            - name: Zip build
+              if: github.event_name != 'pull_request'
+              run: |
+                set -euo pipefail
+                cd export/release/macos/bin
+                app=$(ls -d *.app | head -1)
+                # ditto, not zip: keeps the .app bundle's symlinks and permissions intact
+                ditto -c -k --sequesterRsrc --keepParent "$app" "$GITHUB_WORKSPACE/NightmareVision-GH (Mac ARM).zip"
+            - name: Upload to release
+              if: github.event_name != 'pull_request'
+              env:
+                GH_TOKEN: ${{ github.token }}
+              run: gh release upload ${{ env.RELEASE_TAG }} "NightmareVision-GH (Mac ARM).zip" --clobber
